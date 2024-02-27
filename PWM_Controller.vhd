@@ -21,6 +21,7 @@ end PWM_Controller;
 Architecture Behavioral OF PWM_Controller is
 
 signal counter : integer := 0;
+signal PWMwidth : integer := 0;
 --signal PWMstatesig : std_logic_vector(3 downto 0);
 
 begin
@@ -28,14 +29,15 @@ begin
 process(clk)
 begin
 if rising_edge(Clk) then
-	if counter >= to_integer(unsigned(iData)) and counter < PWM_COUNTER_MAX then
+	PWMwidth <= to_integer(unsigned(iData));
+	if counter >= 255 - PWMwidth and counter < PWM_COUNTER_MAX then
 		PWMSCL <= '1';
 		counter <= counter + 1;
-	elsif counter >= to_integer(unsigned(iData)) and counter >= PWM_COUNTER_MAX then
+	elsif counter >= 255 - PWMwidth and counter >= PWM_COUNTER_MAX then
 		PWMSCL <= '0';
 		counter <= 0;
-	elsif counter < to_integer(unsigned(iData)) then
-		PWMSCL <= '1';
+	elsif counter < 255 - PWMwidth then
+		PWMSCL <= '0';
 		counter <= counter + 1;
 	end if;
 end if;
